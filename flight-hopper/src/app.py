@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from googlesearch import search_flights
 import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 CORS(app)
