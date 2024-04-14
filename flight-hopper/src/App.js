@@ -3,20 +3,26 @@ import SearchForm from './components/SearchForm';
 import SearchResults from './components/SearchResults';
 
 function App() {
-  const [searchResults, setSearchResults] = useState([]); // State to store search results
-
   const handleSearch = async (formData) => {
-    // Replace with a function call to your back-end to search flights
-    // This function should take user input (formData) as argument
-    // and return the flight search results
+    try {
+      const response = await fetch('/search_flights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
   
-    // Example placeholder (replace with actual functionality)
-    const response = await fetch('http://your-backend-server/search-flights', {
-      method: 'POST',
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json();
-    setSearchResults(data);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error('Error fetching flight options:', error);
+      // Handle the error, e.g., display an error message to the user
+    }
   };
 
   return (

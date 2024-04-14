@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+from googlesearch import search_flights
 import requests
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/search_flights', methods=['POST'])
 def search_flights():
@@ -19,9 +22,26 @@ def search_flights():
     return jsonify(flight_options)
 
 def search_google_flights(origin, destination, travel_dates, budget):
-    # Implementieren Sie hier die Logik zur Suche über die Google Flights-API
-    # Verwenden Sie dafür z.B. die googlesearch-python-Bibliothek
-    pass
+    # Rufen Sie die Google Flights-API auf, um Flugoptionen zu suchen
+    flight_options = search_flights(
+        origin=origin,
+        destination=destination,
+        outbound_date=travel_dates['outbound'],
+        inbound_date=travel_dates['inbound'],
+        max_price=budget
+    )
+
+    # Verarbeiten und formatieren Sie die Ergebnisse
+    formatted_options = []
+    for option in flight_options:
+        formatted_option = {
+            'outbound_flight': option['outbound'],
+            'inbound_flight': option['inbound'],
+            'total_price': option['price']
+        }
+        formatted_options.append(formatted_option)
+
+    return formatted_options
 
 if __name__ == '__main__':
     app.run(debug=True)
